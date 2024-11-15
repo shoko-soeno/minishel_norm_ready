@@ -1,25 +1,44 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   builtin_exit.c                                     :+:      :+:    :+:   */
+/*   builtin_pwd.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ssoeno <ssoeno@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/10/26 14:19:21 by ssoeno            #+#    #+#             */
-/*   Updated: 2024/11/15 17:24:02 by ssoeno           ###   ########.fr       */
+/*   Created: 2024/10/27 15:56:59 by ssoeno            #+#    #+#             */
+/*   Updated: 2024/11/15 17:24:10 by ssoeno           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/minishell.h"
 #include "../../includes/builtin.h"
 
-int	builtin_exit(int argc, char *argv[], t_map *envmap)
+int	builtin_pwd(int argc, char *argv[], t_map *envmap)
 {
+	char	buf[PATH_MAX];
+	int		i;
+
 	(void)envmap;
-	if (argc != 1)
+	i = 1;
+	while (i < argc)
 	{
-		printf("%s: too many arguments\n", argv[0]);
+		if (argv[i][0] == '-')
+		{
+			printf("%s: option unsupported\n", argv[i]);
+			return (EXIT_FAILURE);
+		}
+		i++;
+	}
+	if (!getcwd(buf, PATH_MAX))
+	{
+		printf("%s: cannot get working directory\n", argv[0]);
 		return (EXIT_FAILURE);
 	}
-	exit(EXIT_SUCCESS);
+	printf("%s\n", buf);
+	return (EXIT_SUCCESS);
 }
+/*
+if multiple arguments are given, ignore them
+and print the current working directory
+if argument contains "-", print error message
+*/

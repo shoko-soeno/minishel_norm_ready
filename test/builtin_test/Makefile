@@ -6,7 +6,7 @@
 #    By: ssoeno <ssoeno@student.42.fr>              +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/10/25 21:34:48 by shokosoeno        #+#    #+#              #
-#    Updated: 2024/11/12 22:22:43 by ssoeno           ###   ########.fr        #
+#    Updated: 2024/11/12 20:46:05 by ssoeno           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -15,7 +15,7 @@ UNAME_S := $(shell uname -s)
 
 NAME = minishell
 CC = $(if $(findstring Darwin, $(UNAME_S)), cc, clang)
-INCLUDES = -I includes -I $(LIBFT_DIR)
+INCLUDES = -I ../../includes -I $(LIBFT_DIR)
 CFLAGS = -Wall -Wextra -Werror -g $(INCLUDES)
 
 ifeq ($(UNAME_S),Darwin)
@@ -29,30 +29,27 @@ else
 endif
 
 # add libft
-LIBFT_DIR = ./libft
+LIBFT_DIR = ../../libft
 LIBFT = ${LIBFT_DIR}/libft.a
 
-SRCS = srcs/main.c \
-srcs/lexer/lexer_helper.c \
-srcs/lexer/lexer_token_checker.c \
-srcs/lexer/lexer.c \
-srcs/utils/error.c \
-srcs/builtin/builtin_cd.c \
-srcs/builtin/builtin_exit.c \
-srcs/builtin/builtin_pwd.c \
-srcs/builtin/builtin_export.c \
-srcs/builtin/builtin_unset.c \
-srcs/builtin/builtin_echo.c \
-srcs/builtin/builtin_env.c \
-srcs/builtin/lookup_builtin.c \
-srcs/init_env.c \
-srcs/map/item_utils.c \
-srcs/map/map_get.c \
-srcs/map/map_new.c \
-srcs/map/map_put.c \
-srcs/map/map_set.c \
-srcs/map/map_size.c \
-srcs/map/map_unset.c
+SRCS = ./builtin_tester.c \
+../../srcs/builtin/builtin_cd.c \
+../../srcs/builtin/builtin_exit.c \
+../../srcs/builtin/builtin_pwd.c \
+../../srcs/builtin/builtin_export.c \
+../../srcs/builtin/builtin_unset.c \
+../../srcs/builtin/builtin_echo.c \
+../../srcs/builtin/builtin_env.c \
+../../srcs/builtin/lookup_builtin.c \
+../../srcs/map/item_utils.c \
+../../srcs/map/map_get.c \
+../../srcs/map/map_new.c \
+../../srcs/map/map_put.c \
+../../srcs/map/map_set.c \
+../../srcs/map/map_size.c \
+../../srcs/map/map_unset.c \
+../../srcs/utils/error.c \
+../../srcs/init_env.c
 
 OBJS = $(SRCS:.c=.o)
 
