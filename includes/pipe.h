@@ -6,7 +6,7 @@
 /*   By: ssoeno <ssoeno@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/23 16:32:59 by ssoeno            #+#    #+#             */
-/*   Updated: 2024/11/23 20:57:44 by ssoeno           ###   ########.fr       */
+/*   Updated: 2024/11/29 22:50:56 by ssoeno           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,7 @@ struct cmds {
 	char		**cmd;
 	pid_t		pid;
 	int			exit_status;
+	int			capa;
 	struct cmds	*next;
 };
 
