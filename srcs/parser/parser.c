@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parser.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tamatsuu <tamatsuu@student.42tokyo.jp>     +#+  +:+       +#+        */
+/*   By: ssoeno <ssoeno@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/04 18:51:38 by tamatsuu          #+#    #+#             */
-/*   Updated: 2024/11/22 04:42:09 by tamatsuu         ###   ########.fr       */
+/*   Updated: 2024/11/27 23:39:42 by ssoeno           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,6 +40,33 @@ this parser will create AST based on below eBNF.
     WORD: /[a-zA-Z0-9_"]+/
     NUMBER: /[0-9]+/
 				
+*は0回以上
++は1回以上
+例えば
+< input.txt cat > output.txt
+最初の redirection*: < input.txt
+wordlist: ["cat"]
+後半の redirection*: > output.txt
+
+redirection+
+> output.txt
+1回のリダイレクトだけで構成。wordlist がない
+< input.txt > output.txt
+複数のリダイレクトが連続
+
+>> fileに追記
+<< here document
+<> fileを読み書き両方で開く
+NUMBER> はファイルディスクリプタ付きのリダイレクト（例えば 2> error.log）
+
+echo "hello" > output.txt
+(simple_command)
+  ├── (wordlist)
+  │     ├── "echo"
+  │     └── "Hello"
+  └── (redirection)
+        ├── ">"
+        └── "output.txt"
 */
 
 /*
@@ -76,6 +103,8 @@ t_node	*parse_cmd_type(t_token **token_list)
 	else
 		return (simple_cmd(token_list));
 }
+// 左括弧から始まるときはサブシェル
+// それ以外はシンプルコマンド
 
 t_node	*simple_cmd(t_token **token_list)
 {
@@ -101,6 +130,12 @@ t_node	*simple_cmd(t_token **token_list)
 		node->right = parse_redirects(token_list);
 	return (node);
 }
+// 先頭にリダイレクトがあるときは左子ノードとして保存
+// 引数や実行ファイル名はparse_wordsで取得しnode->cmds に保存
+// コマンドやリダイレクトもない場合はNULLを返す
+// コマンドやリダイレクトのみの場合、左子ノードを返す
+// 両方がある場合、ノードを返す。
+// 後続のリダイレクトがあれば右子ノードとして追加
 
 t_node	*parse_subshell(t_token **token_list)
 {
@@ -114,6 +149,11 @@ t_node	*parse_subshell(t_token **token_list)
 		d_throw_error("parser_subshell", "syntax_error");
 	return (node);
 }
+/*
+左括弧(が存在しなければエラー
+サブシェル内のコマンドをparse_cmdで解析し、左子ノードとして保存
+右括弧)が存在しなければエラー
+*/
 
 t_node	*parse_cmd_tail(t_node *left, t_token **token_list)
 {
@@ -143,3 +183,14 @@ t_node	*parse_cmd_tail(t_node *left, t_token **token_list)
 		return (parse_redirects(token_list));
 	return (left);
 }
+/*
+現在のトークンがパイプ|であれば、パイプノード（ND_PIPE）を作成
+左ノードを保存し、右ノードをparse_cmd_typeで解析
+再帰的に次のコマンドを解析
+論理演算子（&&または||）が続く場合:
+ロジックノードを作成し、右側のコマンドを解析
+パイプが右側に続く場合、再帰的に処理
+リダイレクトが続く場合: parse_redirectsを呼び出して処理
+何も該当しなければ左ノードをそのまま返す
+*/
+
