@@ -69,57 +69,54 @@ struct cmds *parse_commandline(char *p)
     cmdhead->cmd[cmdhead->argc] = NULL;
     if (*p == '|' || *p == '>')
     {
-        if (cmdhead == NULL || cmdhead->argc == 0)
-            d_throw_error("parse_commandline", "syntax error"); if (cmdhead) free_cmd(cmdhead);
+        if (cmdhead == NULL || cmdhead->argc == 0){
+            d_throw_error("parse_commandline", "syntax error");
+            if (!cmdhead)
+                return (free_cmd(cmdhead), NULL);
+        }
         cmdhead->next = parse_commandline(p + 1);
         if (cmdhead->next == NULL || cmdhead->next->argc == 0)
-            d_throw_error("parse_commandline", "syntax error"); if (cmdhead) free_cmd(cmdhead);
+        {
+            d_throw_error("parse_commandline", "syntax error");
+            if (!cmdhead)
+                return (free_cmd(cmdhead), NULL);
+        }
         if (*p == '>')
         {
             if (cmdhead->next->argc != 1)
             {
-                d_throw_error("parse_commandline", "syntax error"); if (cmdhead) free_cmd(cmdhead);
+                d_throw_error("parse_commandline", "syntax error");
+                if (!cmdhead)
+                    return (free_cmd(cmdhead), NULL);
                 cmdhead->next->argc = -1;
             }
         }
         *p = '\0';
     }
+    for (int i = 0; i < cmdhead->argc; i++)
+        printf("cmd[%d]: %s\n", i, cmdhead->cmd[i]);
     return cmdhead;
 }
 
 int	main(void)
 {
-	int exit_status;
+	int exit_status = 0;
 	struct cmds *cmdhead;
-    char *line;
-	
-    rl_outstream = stderr;
-	while (1)
-	{
-        line = readline("minishell$ ");
-        if (line == NULL)
-            break ;
-        cmdhead = parse_commandline(line);
-        if (cmdhead == NULL)
-        {
-            fprintf(stderr, "parse error\n");
-            return ;
-        }
-        exit_status = invoke_commands(cmdhead);
-        // free after use
-        struct cmds *tmp;
-        while (cmdhead)
-        {
-            tmp = cmdhead;
-            cmdhead = cmdhead->next;
-            int i = 0;
-            while (i < tmp->argc)
-                free(tmp->cmd[i++]);
-            free(tmp->cmd);
-            free(tmp);
-        }
+    char *line = malloc(100);
+	ft_strlcpy(line, "echo hello > outfile", 100);
+    cmdhead = parse_commandline(line);
+    if (cmdhead == NULL)
+    {
+        fprintf(stderr, "parse error\n");
         free(line);
+        return (1);
     }
+    if (cmdhead->argc > 0)
+        exit_status = invoke_commands(cmdhead);
+    printf("DEBUG exit_status: %d\n", exit_status);
+    // free after use
+    free_cmd(cmdhead);
+    free(line);
 	exit (0);
 }
 
