@@ -55,18 +55,20 @@ struct cmds *parse_commandline(char *p)
                 cmdhead->capa *= 2;
                 cmdhead->cmd = xrealloc(cmdhead->cmd, cmdhead->capa);
             }
+            printf("DEBUG p %s\n", p);
             cmdhead->cmd[cmdhead->argc] = p;
             cmdhead->argc++;
         }
         while (*p && IDENT_CHAR_P(*p))
             p++;
     }
+    printf("DEBUG cmdhead->argc: %d\n", cmdhead->argc);
     if (cmdhead->capa <= cmdhead->argc)
     {
         cmdhead->capa += 1;
         cmdhead->cmd = xrealloc(cmdhead->cmd, cmdhead->capa);
     }
-    cmdhead->cmd[cmdhead->argc] = NULL;
+    cmdhead->cmd[cmdhead->argc] = NULL; // コマンドリストの最後をNULLにする
     if (*p == '|' || *p == '>')
     {
         if (cmdhead == NULL || cmdhead->argc == 0){
@@ -88,14 +90,36 @@ struct cmds *parse_commandline(char *p)
                 d_throw_error("parse_commandline", "syntax error");
                 if (!cmdhead)
                     return (free_cmd(cmdhead), NULL);
-                cmdhead->next->argc = -1;
             }
+            cmdhead->next->argc = -1;
         }
         *p = '\0';
     }
-    for (int i = 0; i < cmdhead->argc; i++)
-        printf("cmd[%d]: %s\n", i, cmdhead->cmd[i]);
     return cmdhead;
+}
+
+void print_cmd_list(struct cmds *cmdhead)
+{
+    struct cmds *cmd;
+    int i = 0;
+
+    cmd = cmdhead;
+    while (cmd)
+    {
+        printf("Node %d:\n", i++);
+        printf("    argc: %d\n", cmd->argc);
+        printf("    capa: %d\n", cmd->capa);
+        printf("    argv: ");
+        if (cmd->cmd != NULL)
+        {
+            for (int j = 0; cmd->cmd[j]; j++)
+                printf("%s ", cmd->cmd[j]);
+        }
+        printf("\n");
+        if (cmd->argc == -1)
+            printf("    This node represents a redirect\n");
+        cmd = cmd->next;
+    }
 }
 
 int	main(void)
@@ -105,6 +129,7 @@ int	main(void)
     char *line = malloc(100);
 	ft_strlcpy(line, "echo hello > outfile", 100);
     cmdhead = parse_commandline(line);
+    print_cmd_list(cmdhead);
     if (cmdhead == NULL)
     {
         fprintf(stderr, "parse error\n");
@@ -119,4 +144,3 @@ int	main(void)
     free(line);
 	exit (0);
 }
-
