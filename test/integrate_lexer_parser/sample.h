@@ -1,5 +1,29 @@
 #include <stdlib.h>
 #include <string.h>
+#include <stdlib.h>
+
+typedef enum {
+    TOKEN_WORD,
+    TOKEN_PIPE,       // |
+    TOKEN_AND,        // &&
+    TOKEN_OR,         // ||
+    TOKEN_REDIRECT_IN,    // <
+    TOKEN_REDIRECT_OUT,   // >
+    TOKEN_REDIRECT_APPEND, // >>
+    TOKEN_REDIRECT_HEREDOC, // <<
+    TOKEN_REDIRECT_READWRITE, // <>
+    TOKEN_NUMBER,     // ファイルディスクリプタの番号
+    TOKEN_EOF
+} TokenType;
+
+typedef struct Token {
+    TokenType type;
+    char *value;
+    struct Token *next;
+} t_token;
+
+// レキサー関数のプロトタイプ
+t_token *lexer(const char *input);
 
 /*
 this parser will create AST based on below eBNF.
