@@ -19,7 +19,7 @@ static t_token *create_token(TokenType type, const char *value) {
         exit(EXIT_FAILURE);
     }
     token->type = type;
-    token->value = value ? strdup(value) : NULL;
+    token->value = value ? xstrdup(value) : NULL;
     token->next = NULL;
     return token;
 }
@@ -42,8 +42,8 @@ t_token *lexer(const char *input) {
         if (isdigit(input[i])) {
             size_t start = i;
             while (i < len && isdigit(input[i])) i++;
-            char num_str[32];
             size_t num_len = i - start;
+            char num_str[32];
             if (num_len >= sizeof(num_str)) {
                 fprintf(stderr, "Number too long\n");
                 exit(EXIT_FAILURE);
@@ -162,15 +162,11 @@ t_token *lexer(const char *input) {
             size_t start = i;
             while (i < len && !isspace(input[i]) && !strchr("|&<>", input[i])) i++;
             size_t word_len = i - start;
-            char *word = malloc(word_len + 1);
-            if (!word) {
-                perror("malloc");
-                exit(EXIT_FAILURE);
-            }
+            char *word = xmalloc(word_len + 1);
             strncpy(word, &input[start], word_len);
             word[word_len] = '\0';
             t_token *token = create_token(TOKEN_WORD, word);
-            free(word);
+            free(word); // create_token 内で複製しているため解放
             if (!head) {
                 head = current = token;
             } else {

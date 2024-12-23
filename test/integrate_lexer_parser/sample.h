@@ -2,29 +2,6 @@
 #include <string.h>
 #include <stdlib.h>
 
-typedef enum {
-    TOKEN_WORD,
-    TOKEN_PIPE,       // |
-    TOKEN_AND,        // &&
-    TOKEN_OR,         // ||
-    TOKEN_REDIRECT_IN,    // <
-    TOKEN_REDIRECT_OUT,   // >
-    TOKEN_REDIRECT_APPEND, // >>
-    TOKEN_REDIRECT_HEREDOC, // <<
-    TOKEN_REDIRECT_READWRITE, // <>
-    TOKEN_NUMBER,     // ファイルディスクリプタの番号
-    TOKEN_EOF
-} TokenType;
-
-typedef struct Token {
-    TokenType type;
-    char *value;
-    struct Token *next;
-} t_token;
-
-// レキサー関数のプロトタイプ
-t_token *lexer(const char *input);
-
 /*
 this parser will create AST based on below eBNF.
     start: command
@@ -44,105 +21,83 @@ this parser will create AST based on below eBNF.
     WORD: /[a-zA-Z0-9_"]+/
 */
 
-// 先にforward宣言を行い、相互再帰構造を可能にする
-typedef struct ASTNode ASTNode;
+// 既存の定義...
 
 typedef enum {
-    NODE_COMMAND,
-    NODE_SIMPLE_COMMAND,
-    NODE_COMMAND_TAIL,
-    NODE_REDIRECTION,
-    NODE_WORDLIST,
-    NODE_FILENAME
+    NODE_COMMAND,       // シンプルコマンド
+    NODE_PIPE,          // パイプ（|）
+    NODE_AND,           // 論理AND（&&）
+    NODE_OR,            // 論理OR（||）
+    NODE_REDIRECTION,   // リダイレクション
+    NODE_WORDLIST,      // ワードリスト
+    NODE_EOF_NODE       // End of File ノード
 } NodeType;
 
-// word, numberなどの文字列を保持
-typedef struct {
-    char *value;
-} WordNodeData;
-
-typedef struct {
-    char **words;
-    size_t word_count;
-} WordListData;
-
-typedef struct {
-    char *symbol; // redirectionの種類　<, >, >>, <<など
-    ASTNode *filename; // filename node
-} RedirectionData;
-
-// simple commandは　前後にredirectionがつく場合がある。
-// wordlistを持つ場合もある
-// redirectionsは複数とれるのでリスト化
-typedef struct {
-    ASTNode **redirections_before;
-    size_t redirection_before_count;
-    ASTNode **redirections_after;
-    size_t redirection_after_count;
-    ASTNode *wordlist;
-} SimpleCommandData;
-
-typedef struct {
-    ASTNode *simple_command;
-    ASTNode *command_tail; // command_tailは再帰的構造になる
-} CommandData;
-
-/*
-command_tail: 
-   "|" cmd_type command_tail 
- | ("&&" | "||") cmd_type command_tail
- | redirection
- |
-ここではオペレータ（|, &&, ||）とcmd_type、またはredirectionを格納
-空(ε)の場合はNULLになる。
-*/
-typedef struct {
-    char *connector; // &&, ||, |
-    ASTNode *cmd_type_or_redir;
-    ASTNode *next_tail;
-} CommandTailData;
-
-struct ASTNode {
+typedef struct ASTNode {
     NodeType type;
     union {
-        CommandData command;
-        SimpleCommandData simple_command;
-        CommandTailData command_tail;
-        RedirectionData redirection;
-        WordListData wordlist;
-        WordNodeData filename; // filenameはwordとほぼ同じ構造だが、リダイレクトの種類が違うため分ける
+        // シンプルコマンド
+        struct {
+            struct ASTNode *wordlist;
+            struct ASTNode *redirection; // シンプルコマンドに1つのリダイレクションを関連付け
+        } command;
+
+        // パイプラインや論理演算子（二分木）
+        struct {
+            struct ASTNode *left;
+            struct ASTNode *right;
+        } binary;
+
+        // リダイレクション
+        struct {
+            char *symbol;
+            struct ASTNode *filename;
+        } redirection;
+
+        // ワードリスト
+        struct {
+            char **words;
+            size_t count;
+        } wordlist;
     } data;
-};
+} ASTNode;
 
-/*
-ASTNodeにはtypeとdataがあります。
-dataはunionなので、typeによって有効なメンバが異なります。
-typeがNODE_COMMANDならdata.commandが意味を持ちます。
-CommandDataはNODE_COMMANDノードが保持するデータ構造で、
-simple_commandとcommand_tailという2つのASTNode*を持っています。
+// トークン関連の定義（既存のものを維持）
+typedef enum {
+    TOKEN_WORD,
+    TOKEN_PIPE,             // |
+    TOKEN_AND,              // &&
+    TOKEN_OR,               // ||
+    TOKEN_REDIRECT_IN,      // <
+    TOKEN_REDIRECT_OUT,     // >
+    TOKEN_REDIRECT_APPEND,  // >>
+    TOKEN_REDIRECT_HEREDOC, // <<
+    TOKEN_REDIRECT_READWRITE, // <>
+    TOKEN_NUMBER,           // ファイルディスクリプタの番号
+    TOKEN_EOF
+} TokenType;
 
-ASTNode (NODE_COMMAND)
-+--------------------------------------+
-| type = NODE_COMMAND                  |
-|                                      |
-|  data (union)                        |
-|   +----------------------------------+
-|   | command (CommandData)            |
-|   |   +----------------------------+ |
-|   |   | simple_command (ASTNode*)  | |
-|   |   | command_tail  (ASTNode*)   | |
-|   |   +----------------------------+ |
-|   +----------------------------------+
-+--------------------------------------+
-CommandDataが持つsimple_commandやcommand_tailは、また別のASTNodeオブジェクトへのポインタです。
-つまり、NODE_COMMAND型のASTNode（親ノード）は、
-CommandDataを通して子ノード（simple_commandとcommand_tail）を参照します。
-例えば、simple_commandがNODE_SIMPLE_COMMANDタイプのASTNodeだとしたら、以下のようにツリー状に繋がります。
+typedef struct Token {
+    TokenType type;
+    char *value;
+    struct Token *next;
+} t_token;
 
-ASTNode (NODE_COMMAND)
-+--------------------------------------+
-| type = NODE_COMMAND                  |
-| data.command.simple_command ---------+----> ASTNode (NODE_SIMPLE_COMMAND)
-| data.command.command_tail   ---------+----> ASTNode (NODE_COMMAND_TAIL)
-+--------------------------------------+
-*/
+// レキサー関数のプロトタイプ
+t_token *lexer(const char *input);
+
+// ASTノード作成関数
+ASTNode* create_command_node(ASTNode *wordlist, ASTNode *redirection);
+ASTNode* create_binary_node(NodeType type, ASTNode *left, ASTNode *right);
+ASTNode* create_redirection_node(const char *symbol, ASTNode *filename);
+ASTNode* create_wordlist_node(char **words, size_t count);
+
+// パース関数
+ASTNode *parse_start(t_token *token_list);
+
+// AST表示関数
+void print_ast(ASTNode *node, int depth);
+
+// メモリ解放関数
+void free_ast(ASTNode *node);
+void free_token_list(t_token *token);
