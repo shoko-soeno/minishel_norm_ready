@@ -6,7 +6,7 @@
 /*   By: ssoeno <ssoeno@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/31 03:08:18 by tamatsuu          #+#    #+#             */
-/*   Updated: 2025/01/02 15:11:48 by ssoeno           ###   ########.fr       */
+/*   Updated: 2025/01/02 16:56:23 by ssoeno           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,9 +27,9 @@ size_t	retrieve_val_in_sq(char **ret, char *str, size_t i)
 	return (closing_sq_pos);
 }
 
-size_t expand_inside_dq(char **ret, char *str, size_t start, t_map *envp)
+size_t	expand_inside_dq(char **ret, char *str, size_t start, t_map *envp)
 {
-	size_t cur;
+	size_t	cur;
 
 	cur = start;
 	while (str[cur] && !is_d_quote(str[cur]))

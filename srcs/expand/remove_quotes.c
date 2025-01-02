@@ -6,7 +6,7 @@
 /*   By: ssoeno <ssoeno@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/31 03:12:31 by tamatsuu          #+#    #+#             */
-/*   Updated: 2025/01/02 15:06:16 by ssoeno           ###   ########.fr       */
+/*   Updated: 2025/01/02 16:56:49 by ssoeno           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,7 @@ char	*remove_quotes(char *str)
 	ret = (char *)xmalloc(sizeof(char) * (ft_strlen(str) + 1));
 	i = 0;
 	j = 0;
-	while(str[i])
+	while (str[i])
 	{
 		if (is_s_quote(str[i]) || is_d_quote(str[i]))
 		{
