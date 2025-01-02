@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   expand_variable_helper.c                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tamatsuu <tamatsuu@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ssoeno <ssoeno@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/31 03:08:18 by tamatsuu          #+#    #+#             */
-/*   Updated: 2024/12/31 03:09:47 by tamatsuu         ###   ########.fr       */
+/*   Updated: 2025/01/02 15:11:48 by ssoeno           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,38 +16,45 @@
 
 size_t	retrieve_val_in_sq(char **ret, char *str, size_t i)
 {
-	size_t	next_sq_pos;
+	size_t	closing_sq_pos;
 
 	if (!is_s_quote(str[i]) || !ret || !str)
 		d_throw_error("retrieve_val_in_sq", "arg is invalid");
-	next_sq_pos = skip_s_quote(str, i);
-	str_concat_helper(ret, str, i, next_sq_pos - i + 1);
-	if (!is_s_quote(str[next_sq_pos]))
+	closing_sq_pos = skip_s_quote_block(str, i);
+	append_substring(ret, str, i, closing_sq_pos - i + 1);
+	if (!is_s_quote(str[closing_sq_pos]))
 		d_throw_error("retrieve_val_in_sq", "unexpected error");
-	return (next_sq_pos);
+	return (closing_sq_pos);
+}
+
+size_t expand_inside_dq(char **ret, char *str, size_t start, t_map *envp)
+{
+	size_t cur;
+
+	cur = start;
+	while (str[cur] && !is_d_quote(str[cur]))
+	{
+		if (is_dollar_symbol(str[cur]))
+			cur = retrieve_var(ret, str, cur, envp);
+		else
+			append_substring(ret, str, cur, 1);
+		cur++;
+	}
+	return (cur);
 }
 
 size_t	retrieve_val_in_dq(char **ret, char *str, size_t i, t_map *envp)
 {
-	size_t	j;
+	size_t	content_end;
 
-	if (!is_d_quote(str[i]) || !ret || !str)
+	if (!ret || !str)
 		d_throw_error("retrieve_val_in_dq", "arg is invalid");
-	j = i + 1;
-	while (str[j] && !is_d_quote(str[j]))
-	{
-		if (is_dollar_symbol(str[j]))
-		{
-			str_concat_helper(ret, str, i, j - i);
-			j = retrieve_var(ret, str, j, envp);
-			i = j + 1;
-		}
-		j++;
-	}
-	str_concat_helper(ret, str, i, j - i + 1);
-	if (!is_d_quote(str[j]))
-		d_throw_error("retrieve_val_in_dq", "unexpected error");
-	return (j);
+	if (!is_d_quote(str[i]))
+		d_throw_error("retrieve_val_in_dq", "expected double quote");
+	content_end = expand_inside_dq(ret, str, i + 1, envp);
+	if (!str[content_end])
+		d_throw_error("retrieve_val_in_dq", "double quote not closed");
+	return (content_end);
 }
 
 size_t	retrieve_var(char **ret, char *str, size_t i, t_map *envp)
@@ -59,18 +66,18 @@ size_t	retrieve_var(char **ret, char *str, size_t i, t_map *envp)
 	if (!str)
 		d_throw_error("retrieve_var", "arg is invalid");
 	if (!str[i + 1])
-		return (str_concat_helper(ret, str, i, 1), i);
+		return (append_substring(ret, str, i, 1), i);
 	var_name_len = retrieve_var_name_len(str, i + 1);
 	if (!var_name_len)
-		return (str_concat_helper(ret, str, i, 1), i);
+		return (append_substring(ret, str, i, 1), i);
 	tmp = ft_substr(str, i + 1, var_name_len);
 	if (!tmp)
 		d_throw_error("retrieve_var", "substr failed");
 	map_get_val = map_get(envp, tmp);
 	if (map_get_val)
-		str_concat_helper(ret, map_get_val, 0, ft_strlen(map_get_val));
+		append_substring(ret, map_get_val, 0, ft_strlen(map_get_val));
 	else
-		str_concat_helper(ret, "", 0, 0);
+		append_substring(ret, "", 0, 0);
 	free(tmp);
 	return (var_name_len + i);
 }
@@ -103,6 +110,6 @@ size_t	retrieve_normal_val(char **ret, char *str, size_t i)
 	{
 		j++;
 	}
-	str_concat_helper(ret, str, i, j);
+	append_substring(ret, str, i, j);
 	return (i + j - 1);
 }

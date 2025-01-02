@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   remove_quotes.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tamatsuu <tamatsuu@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ssoeno <ssoeno@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/31 03:12:31 by tamatsuu          #+#    #+#             */
-/*   Updated: 2024/12/31 03:14:13 by tamatsuu         ###   ########.fr       */
+/*   Updated: 2025/01/02 15:06:16 by ssoeno           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,29 +16,31 @@
 
 char	*remove_quotes(char *str)
 {
-	size_t	i;
-	size_t	quote_end;
-	size_t	j;
 	char	*ret;
+	size_t	i;
+	size_t	j;
+	size_t	quote_end;
 
 	if (!str)
 		d_throw_error("remove_quotes", "unexpected error. str is null");
-	ret = xmalloc(ft_strlen(str));
+	ret = (char *)xmalloc(sizeof(char) * (ft_strlen(str) + 1));
 	i = 0;
 	j = 0;
-	while (str[i])
+	while(str[i])
 	{
 		if (is_s_quote(str[i]) || is_d_quote(str[i]))
 		{
 			quote_end = move_to_next_quotation_expnd(str, i);
-			while (++i < quote_end)
-				ret[j++] = str[i];
+			i++;
+			while (i < quote_end)
+				ret[j++] = str[i++];
 			i++;
 		}
 		else
 			ret[j++] = str[i++];
 	}
-	return (ret[j] = '\0', ret);
+	ret[j] = '\0';
+	return (ret);
 }
 
 int	move_to_next_quotation_expnd(char *input, int i)

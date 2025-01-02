@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   expand_variable.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tamatsuu <tamatsuu@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ssoeno <ssoeno@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/31 02:58:35 by tamatsuu          #+#    #+#             */
-/*   Updated: 2024/12/31 03:10:34 by tamatsuu         ###   ########.fr       */
+/*   Updated: 2025/01/02 16:43:27 by ssoeno           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,11 +15,20 @@
 #include "../../includes/expand.h"
 
 /*
-$? -> 前に終了したステータスの中身を文字列として取り出す
-$<変数名> -> 変数名に該当する変数を展開し、中身を文字列として取り出す
-*展開 -> カレントディレクト下のファイル・フォルダ名に展開することが出来る。
-シングルクォーテーションで囲まれている場合、展開は行わない
-ダブルクォーテーションで囲まれている場合、$変数の展開は行う
+Asterisk -> not implemented yet
+$? -> not implemented yet?
+Single quotes (suppress expansion): Detected using is_s_quote. 
+	calls retrieve_val_in_sq which skips the single quotes and 
+	returns the string inside the quotes.
+Double quotes (allow expansion): Detected using is_d_quote. 
+	calls retrieve_val_in_dq
+	which expands the variables inside the quotes.
+Dollar symbol (expand variables): Detected using is_dollar_symbol. 
+	calls retrieve_var which expands the variables
+	by looking up its value in envp. 
+	If not found, returns an empty string.
+Normal value: Handled by retrieve_normal_val
+	append literal characters to ret until a special character (', ", $)
 */
 
 char	*expand_variable(char *str, t_map *envp)
