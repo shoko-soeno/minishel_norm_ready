@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   builtin_cd.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ssoeno <ssoeno@student.42.fr>              +#+  +:+       +#+        */
+/*   By: tamatsuu <tamatsuu@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/27 15:55:17 by ssoeno            #+#    #+#             */
-/*   Updated: 2025/01/02 18:49:34 by ssoeno           ###   ########.fr       */
+/*   Updated: 2025/01/04 02:31:03 by tamatsuu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,17 +67,17 @@ void	update_pwd(t_map *envmap, char *pwd_before_chdir, char *path)
 	}
 }
 
-int	builtin_cd(int argc, char *argv[], t_map *envmap, t_context *ctx)
+int	builtin_cd(int argc, char *argv[], t_context *ctx)
 {
 	char		*pwd_before_chdir;
 	char		path[PATH_MAX];
 
 	if (handle_cd_error(argc, argv, ctx) == EXIT_FAILURE)
 		return (ctx->last_status);
-	pwd_before_chdir = xgetenv(envmap, "PWD");
-	map_set(envmap, "OLDPWD", pwd_before_chdir);
+	pwd_before_chdir = xgetenv(ctx->env, "PWD");
+	map_set(ctx->env, "OLDPWD", pwd_before_chdir);
 	if (argc == 1)
-		cd_with_no_argument(envmap, path);
+		cd_with_no_argument(ctx->env, path);
 	else
 		ft_strlcpy(path, argv[1], PATH_MAX);
 	if (path[0] == '\0' || chdir(path) < 0)
@@ -86,7 +86,7 @@ int	builtin_cd(int argc, char *argv[], t_map *envmap, t_context *ctx)
 		ctx->last_status = EXIT_FAILURE;
 		return (ctx->last_status);
 	}
-	update_pwd(envmap, pwd_before_chdir, path);
+	update_pwd(ctx->env, pwd_before_chdir, path);
 	return (EXIT_SUCCESS);
 }
 /*

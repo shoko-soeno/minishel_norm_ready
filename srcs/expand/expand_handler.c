@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   expand_handler.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tamatsuu <tamatsuu@student.42.fr>          +#+  +:+       +#+        */
+/*   By: tamatsuu <tamatsuu@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/31 02:57:36 by tamatsuu          #+#    #+#             */
-/*   Updated: 2024/12/31 03:58:54 by tamatsuu         ###   ########.fr       */
+/*   Updated: 2025/01/04 02:41:00 by tamatsuu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,17 +14,17 @@
 #include "../../libft/libft.h"
 #include "../../includes/expand.h"
 
-void	expand_handler(t_node *node, t_map *envp)
+void	expand_handler(t_node *node, t_context *ctx)
 {
 	if (!node || !node->cmds)
 		d_throw_error("expand_handler", "node or cmds is null");
-	expand_variable_handler(node, envp);
+	expand_variable_handler(node, ctx);
 	//word_split_handler(node);
 	//expand_asterisk_handler(node);
 	remove_quote_handler(node);
 }
 
-void	expand_variable_handler(t_node *node, t_map *envp)
+void	expand_variable_handler(t_node *node, t_context *ctx)
 {
 	int		i;
 	char	*tmp;
@@ -37,7 +37,7 @@ void	expand_variable_handler(t_node *node, t_map *envp)
 		if (ft_strchr(node->cmds[i], DOLLAR))
 		{
 			tmp = NULL;
-			tmp = expand_variable(node->cmds[i], envp);
+			tmp = expand_variable(node->cmds[i], ctx);
 			free(node->cmds[i]);
 			node->cmds[i] = NULL;
 			node->cmds[i] = tmp;

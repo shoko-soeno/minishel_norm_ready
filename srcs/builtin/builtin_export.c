@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   builtin_export.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ssoeno <ssoeno@student.42.fr>              +#+  +:+       +#+        */
+/*   By: tamatsuu <tamatsuu@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/17 19:49:49 by ssoeno            #+#    #+#             */
-/*   Updated: 2025/01/02 11:34:45 by ssoeno           ###   ########.fr       */
+/*   Updated: 2025/01/04 02:36:38 by tamatsuu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,12 +18,12 @@
 static bool	is_valid_env_name(char *str);
 int			update_key_value(t_map *map, const char *str, bool allow_empty);
 
-int	builtin_export(int argc, char **argv, t_map *envmap, t_context *ctx)
+int	builtin_export(int argc, char **argv, t_context *ctx)
 {
 	size_t	i;
 
 	(void)argc;
-	if (envmap == NULL)
+	if (ctx->env == NULL)
 	{
 		builtin_error("builtin_export", NULL, "map is not initialized");
 		ctx->last_status = EXIT_INVALID_INPUT;
@@ -31,14 +31,14 @@ int	builtin_export(int argc, char **argv, t_map *envmap, t_context *ctx)
 	}
 	if (argv[1] == NULL)
 	{
-		print_sorted_env(envmap);
+		print_sorted_env(ctx->env);
 		ctx->last_status = EXIT_SUCCESS;
 		return (ctx->last_status);
 	}
 	i = 1;
 	while (argv[i])
 	{
-		if (update_key_value(envmap, argv[i++], true) < 0)
+		if (update_key_value(ctx->env, argv[i++], true) < 0)
 		{
 			builtin_error("export ", argv[i - 1], " not a valid identifier");
 			ctx->last_status = EXIT_FAILURE;

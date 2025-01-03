@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   builtin_env.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ssoeno <ssoeno@student.42.fr>              +#+  +:+       +#+        */
+/*   By: tamatsuu <tamatsuu@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/17 19:49:31 by ssoeno            #+#    #+#             */
-/*   Updated: 2025/01/01 13:17:47 by ssoeno           ###   ########.fr       */
+/*   Updated: 2025/01/04 02:32:17 by tamatsuu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 #include "../../includes/builtin.h"
 #include "../../includes/utils.h"
 
-int	builtin_env(int argc, char *argv[], t_map *envmap, t_context *ctx)
+int	builtin_env(int argc, char *argv[], t_context *ctx)
 {
 	t_item	*cur;
 
@@ -25,7 +25,7 @@ int	builtin_env(int argc, char *argv[], t_map *envmap, t_context *ctx)
 		ctx->last_status = EXIT_FAILURE;
 		return (EXIT_FAILURE);
 	}
-	cur = envmap->item_head.next;
+	cur = ctx->env->item_head.next;
 	while (cur)
 	{
 		if (cur->value)

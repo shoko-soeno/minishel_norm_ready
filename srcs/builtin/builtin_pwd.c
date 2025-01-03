@@ -3,23 +3,22 @@
 /*                                                        :::      ::::::::   */
 /*   builtin_pwd.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ssoeno <ssoeno@student.42.fr>              +#+  +:+       +#+        */
+/*   By: tamatsuu <tamatsuu@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/27 15:56:59 by ssoeno            #+#    #+#             */
-/*   Updated: 2025/01/01 16:10:32 by ssoeno           ###   ########.fr       */
+/*   Updated: 2025/01/04 02:37:05 by tamatsuu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/minishell.h"
 #include "../../includes/builtin.h"
 
-int	builtin_pwd(int argc, char *argv[], t_map *envmap, t_context *ctx)
+int	builtin_pwd(int argc, char *argv[], t_context *ctx)
 {
 	char	buf[PATH_MAX];
 	int		i;
 
 	(void)argc;
-	(void)envmap;
 	i = 1;
 	if (argv[1] && argv[1][0] == '-')
 	{

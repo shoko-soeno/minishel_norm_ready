@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   builtin_exit.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ssoeno <ssoeno@student.42.fr>              +#+  +:+       +#+        */
+/*   By: tamatsuu <tamatsuu@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/26 14:19:21 by ssoeno            #+#    #+#             */
-/*   Updated: 2025/01/03 23:08:26 by ssoeno           ###   ########.fr       */
+/*   Updated: 2025/01/04 02:35:02 by tamatsuu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,9 +16,8 @@
 
 static bool	is_digit_str(char *str);
 
-int	builtin_exit(int argc, char *argv[], t_map *envmap, t_context *ctx)
+int	builtin_exit(int argc, char *argv[], t_context *ctx)
 {
-	(void)envmap;
 	if (ctx->is_exec_in_child_ps)
 		ft_putendl_fd("exit", STDERR_FILENO);
 	if (argc > 2)
@@ -33,7 +32,6 @@ int	builtin_exit(int argc, char *argv[], t_map *envmap, t_context *ctx)
 		{
 			builtin_error("exit", argv[1], "numeric argument required");
 			ctx->last_status = EXIT_INVALID_INPUT;
-			// return (ctx->last_status);
 			exit(ctx->last_status);
 		}
 		ctx->last_status = ft_atoi(argv[1]);

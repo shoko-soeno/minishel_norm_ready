@@ -10,6 +10,7 @@
 		"lexer.h": "c",
 		"minishell.h": "c",
 		"execute.h": "c",
-		"expand.h": "c"
+		"expand.h": "c",
+		"utils.h": "c"
 	},
 }

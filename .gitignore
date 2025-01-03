@@ -54,3 +54,6 @@ dkms.conf
 minishell
 ./vscode/*
 *.out
+/minishell
+/result
+./minishell

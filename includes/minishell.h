@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ssoeno <ssoeno@student.42.fr>              +#+  +:+       +#+        */
+/*   By: tamatsuu <tamatsuu@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/25 21:31:55 by shokosoeno        #+#    #+#             */
-/*   Updated: 2025/01/03 23:03:16 by ssoeno           ###   ########.fr       */
+/*   Updated: 2025/01/04 02:04:20 by tamatsuu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,9 +44,10 @@ typedef struct s_context {
 	int		cnt;
 	bool	is_exec_in_child_ps;
 	int		last_status;
+	t_map	*env;
 }	t_context;
 
-void		start_exec(char *line, t_map *envp, t_context *ctx);
+void		start_exec(char *line, t_context *ctx);
 t_context	*init_ctx(void);
 void		clear_ctx(t_context *ctx);
 

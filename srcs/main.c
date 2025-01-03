@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ssoeno <ssoeno@student.42.fr>              +#+  +:+       +#+        */
+/*   By: tamatsuu <tamatsuu@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/25 21:36:46 by shokosoeno        #+#    #+#             */
-/*   Updated: 2025/01/03 23:04:44 by ssoeno           ###   ########.fr       */
+/*   Updated: 2025/01/04 03:11:28 by tamatsuu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,9 +22,6 @@
 int	main(int argc, char *argv[], char *envp[])
 {
 	char	*line;
-	//t_token	*token_list;
-	t_map	*env;
-	//t_node	*ast;
 	t_context	*ctx;
 
 	ctx = init_ctx();
@@ -33,8 +30,8 @@ int	main(int argc, char *argv[], char *envp[])
 	(void)argv;
 	rl_outstream = stderr;
 	setup_signal();
-	env = init_env(envp);
-	if (!env)
+	ctx->env = init_env(envp);
+	if (!ctx->env)
 		d_throw_error("main", "init_env is failed");
 	while (1)
 	{
@@ -44,7 +41,7 @@ int	main(int argc, char *argv[], char *envp[])
 		if (*line)
 		{
 			add_history(line);
-			start_exec(line, env, ctx);
+			start_exec(line, ctx);
 			//token_list = lexer(line);
 			//ast = parse_cmd(&token_list);
 			//free_node(ast);
@@ -59,19 +56,19 @@ int	main(int argc, char *argv[], char *envp[])
 	return (ctx->last_status);
 }
 
-void    start_exec(char *line, t_map *envp, t_context *ctx)
+void	start_exec(char *line, t_context *ctx)
 {
-    t_token        *token_list;
-    t_node        *ast_node;
+	t_token		*token_list;
+	t_node		*ast_node;
 
-    token_list = lexer(line);
-    ast_node = parse_cmd(&token_list);
-    clear_ctx(ctx);
-    exec_handler(ast_node, envp, ctx);
-    if (ctx->cnt)
-        wait_children_status(ctx);
-    free_token_list(token_list);
-    free_ast(&ast_node);
+	token_list = lexer(line);
+	ast_node = parse_cmd(&token_list);
+	clear_ctx(ctx);
+	exec_handler(ast_node, ctx);
+	if (ctx->cnt)
+		wait_children_status(ctx);
+	free_token_list(token_list);
+	free_ast(&ast_node);
 }
 
 t_context	*init_ctx(void)

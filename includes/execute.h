@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   execute.h                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ssoeno <ssoeno@student.42.fr>              +#+  +:+       +#+        */
+/*   By: tamatsuu <tamatsuu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/08 18:09:09 by tamatsuu          #+#    #+#             */
-/*   Updated: 2025/01/03 16:48:48 by ssoeno           ###   ########.fr       */
+/*   Updated: 2025/01/03 23:36:10 by tamatsuu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,14 +27,14 @@
 # define ECHO "echo"
 # define EXPORT "export"
 
-int		exec_handler(t_node *ast_node, t_map *envp, t_context *ctx);
-int		exec_pipe(t_node *node, t_map *envp, t_context *ctx);
-int		exec_cmd(t_node *node, t_map *envp, t_context *ctx);
-int		exec_cmd_handler(t_node *node, t_map *envp, t_context *ctx);
+int		exec_handler(t_node *ast_node, t_context *ctx);
+int		exec_pipe(t_node *node, t_context *ctx);
+int		exec_cmd(t_node *node, t_context *ctx);
+int		exec_cmd_handler(t_node *node, t_context *ctx);
 
-int		exec_or_node(t_node *node, t_map *envp, t_context *ctx);
-int		exec_and_node(t_node *node, t_map *envp, t_context *ctx);
-int		exec_round_brackets(t_node *node, t_map *envp, t_context *ctx);
+int		exec_or_node(t_node *node, t_context *ctx);
+int		exec_and_node(t_node *node, t_context *ctx);
+int		exec_round_brackets(t_node *node, t_context *ctx);
 
 void	setup_child_process_fd(t_context *ctx);
 void	reset_parent_process_fd(t_context *ctx);

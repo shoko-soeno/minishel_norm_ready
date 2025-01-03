@@ -23,6 +23,7 @@ else
 	echo "builtin test"
 	./combination_test/builtin_test.sh
 	echo "test is completed"
+	test_result
 fi
 
 trap 'cleanup || { echo "Error: cleanup failed"; exit 1; }' EXIT

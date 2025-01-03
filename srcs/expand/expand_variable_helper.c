@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   expand_variable_helper.c                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tamatsuu <tamatsuu@student.42.fr>          +#+  +:+       +#+        */
+/*   By: tamatsuu <tamatsuu@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/31 03:08:18 by tamatsuu          #+#    #+#             */
-/*   Updated: 2024/12/31 03:09:47 by tamatsuu         ###   ########.fr       */
+/*   Updated: 2025/01/04 02:42:04 by tamatsuu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,7 @@ size_t	retrieve_val_in_sq(char **ret, char *str, size_t i)
 	return (next_sq_pos);
 }
 
-size_t	retrieve_val_in_dq(char **ret, char *str, size_t i, t_map *envp)
+size_t	retrieve_val_in_dq(char **ret, char *str, size_t i, t_context *ctx)
 {
 	size_t	j;
 
@@ -39,7 +39,7 @@ size_t	retrieve_val_in_dq(char **ret, char *str, size_t i, t_map *envp)
 		if (is_dollar_symbol(str[j]))
 		{
 			str_concat_helper(ret, str, i, j - i);
-			j = retrieve_var(ret, str, j, envp);
+			j = retrieve_var(ret, str, j, ctx);
 			i = j + 1;
 		}
 		j++;
@@ -50,7 +50,7 @@ size_t	retrieve_val_in_dq(char **ret, char *str, size_t i, t_map *envp)
 	return (j);
 }
 
-size_t	retrieve_var(char **ret, char *str, size_t i, t_map *envp)
+size_t	retrieve_var(char **ret, char *str, size_t i, t_context *ctx)
 {
 	size_t	var_name_len;
 	char	*tmp;
@@ -66,7 +66,7 @@ size_t	retrieve_var(char **ret, char *str, size_t i, t_map *envp)
 	tmp = ft_substr(str, i + 1, var_name_len);
 	if (!tmp)
 		d_throw_error("retrieve_var", "substr failed");
-	map_get_val = map_get(envp, tmp);
+	map_get_val = map_get(ctx->env, tmp);
 	if (map_get_val)
 		str_concat_helper(ret, map_get_val, 0, ft_strlen(map_get_val));
 	else

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   expand_variable.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tamatsuu <tamatsuu@student.42.fr>          +#+  +:+       +#+        */
+/*   By: tamatsuu <tamatsuu@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/31 02:58:35 by tamatsuu          #+#    #+#             */
-/*   Updated: 2024/12/31 03:10:34 by tamatsuu         ###   ########.fr       */
+/*   Updated: 2025/01/04 02:42:26 by tamatsuu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@ $<変数名> -> 変数名に該当する変数を展開し、中身を文字列�
 ダブルクォーテーションで囲まれている場合、$変数の展開は行う
 */
 
-char	*expand_variable(char *str, t_map *envp)
+char	*expand_variable(char *str, t_context *ctx)
 {
 	size_t	i;
 	char	*ret;
@@ -34,9 +34,9 @@ char	*expand_variable(char *str, t_map *envp)
 		if (is_s_quote(str[i]))
 			i = retrieve_val_in_sq(&ret, str, i);
 		else if (is_dollar_symbol(str[i]))
-			i = retrieve_var(&ret, str, i, envp);
+			i = retrieve_var(&ret, str, i, ctx);
 		else if (is_d_quote(str[i]))
-			i = retrieve_val_in_dq(&ret, str, i, envp);
+			i = retrieve_val_in_dq(&ret, str, i, ctx);
 		else
 			i = retrieve_normal_val(&ret, str, i);
 		i++;
