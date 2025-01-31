@@ -6,7 +6,7 @@
 /*   By: ssoeno <ssoeno@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/30 21:49:29 by tamatsuu          #+#    #+#             */
-/*   Updated: 2025/01/18 18:39:39 by ssoeno           ###   ########.fr       */
+/*   Updated: 2025/01/31 11:18:09 by ssoeno           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,8 +14,8 @@
 # define SIGNALS_H
 # define _POSIX_C_SOURCE 200809L
 # include <signal.h>
-#include <stdbool.h>
-#include <sys/wait.h>
+# include <stdbool.h>
+# include <sys/wait.h>
 
 // signal
 typedef struct sigaction		t_sig;

@@ -6,7 +6,7 @@
 /*   By: ssoeno <ssoeno@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/08 00:34:47 by tamatsuu          #+#    #+#             */
-/*   Updated: 2025/01/29 17:37:43 by ssoeno           ###   ########.fr       */
+/*   Updated: 2025/01/29 23:31:14 by ssoeno           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,14 +18,23 @@
 void	redirect_in(char *filename, t_context *ctx);
 void	redirect_out(char *filename, t_context *ctx);
 void	redirect_append(char *filename, t_context *ctx);
-void	redirect_here_doc(t_node *node);
+void	redirect_here_doc(t_node *node, t_context *ctx);
 
-void	redirect_here_doc(t_node *node)
+void	redirect_here_doc(t_node *node, t_context *ctx)
 {
 	if (node->fd_num > 2)
 	{
-		dup2(node->fd_num, STDIN_FILENO);
+		if (dup2(node->fd_num, STDIN_FILENO) < 0)
+		{
+			perror("dup2");
+			ctx->last_status = EXIT_FAILURE;
+			if (ctx->is_exec_in_child_ps)
+				exit(EXIT_FAILURE);
+			return ;
+		}
+		ctx->last_status = EXIT_SUCCESS;
 		close(node->fd_num);
+		node->fd_num = -1;
 	}
 }
 

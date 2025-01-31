@@ -3,23 +3,20 @@
 /*                                                        :::      ::::::::   */
 /*   utils.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tamatsuu <tamatsuu@student.42tokyo.jp>     +#+  +:+       +#+        */
+/*   By: ssoeno <ssoeno@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: Invalid date        by                   #+#    #+#             */
-/*   Updated: 2025/01/27 01:47:36 by tamatsuu         ###   ########.fr       */
+/*   Created: 2024/10/23 01:13:23 by tamatsuu          #+#    #+#             */
+/*   Updated: 2025/01/31 11:21:12 by ssoeno           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-
 #ifndef UTILS_H
 # define UTILS_H
-
 # include <stdio.h>
 # include <unistd.h>
 # include <stdlib.h>
 # include "minishell.h"
 # include "parser.h"
-
 # define ERR_MSG_SYNTAX_S_QUOTE "unexpected EOF while looking for matching `''"
 # define ERR_MSG_SYNTAX_D_QUOTE "unexpected EOF while looking for matching `\"'"
 # define ERR_MSG_SUBSHELL "syntax error: unexpected end of file"
@@ -32,15 +29,14 @@
 # define ERR_MSG_R_PARE "syntax error near unexpected token `)'"
 # define EXIT_SYNTAX_ERROR 2
 # define ERROR_PREFIX "minishell: "
-
 # define ERR_MSG_PROCESS_LIMIT "Exceed number of process limit"
+
 // error.c
 void	d_throw_error(char *func_name, char *error_msg);
 void	builtin_error(char *func, char *name, char *err);
 void	throw_unexpected_error(char *func_name, char *err_msg);
 void	throw_syntax_error(char *err_msg, char *err_msg2);
-void    perror_prefix(void);
-
+void	perror_prefix(void);
 void	throw_system_error(char *err_msg, char *err_msg2);
 
 // free_functions.c

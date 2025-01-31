@@ -6,7 +6,7 @@
 /*   By: ssoeno <ssoeno@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/25 21:36:46 by shokosoeno        #+#    #+#             */
-/*   Updated: 2025/01/29 17:42:48 by ssoeno           ###   ########.fr       */
+/*   Updated: 2025/01/31 11:49:33 by ssoeno           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,7 +68,10 @@ bool	read_command(t_context *ctx)
 
 	line = readline("minishell$ ");
 	if (line == NULL)
+	{
+		ft_putendl_fd("exit", STDERR_FILENO);
 		return (false);
+	}
 	if (g_sig != 0)
 	{
 		ctx->last_status = g_sig + 128;

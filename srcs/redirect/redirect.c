@@ -6,7 +6,7 @@
 /*   By: ssoeno <ssoeno@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/08 00:34:47 by tamatsuu          #+#    #+#             */
-/*   Updated: 2025/01/29 18:11:34 by ssoeno           ###   ########.fr       */
+/*   Updated: 2025/01/29 21:53:26 by ssoeno           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,7 +46,7 @@ int	apply_redirects(t_node *node, t_context *ctx)
 		else if (ft_strcmp(op, "<") == 0)
 			redirect_in(filename, ctx);
 		else if (ft_strcmp(op, "<<") == 0)
-			redirect_here_doc(node);
+			redirect_here_doc(node, ctx);
 		else
 			d_throw_error("apply_redirect_fds", "unexpected operator");
 		if (ctx->last_status != EXIT_SUCCESS)

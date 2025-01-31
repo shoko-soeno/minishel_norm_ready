@@ -5,13 +5,10 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: ssoeno <ssoeno@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: Invalid date        by                   #+#    #+#             */
-/*   Updated: 2025/01/29 17:43:23 by ssoeno           ###   ########.fr       */
+/*   Created: 2024/10/23 01:13:23 by tamatsuu          #+#    #+#             */
+/*   Updated: 2025/01/31 11:20:30 by ssoeno           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-
-
-
 
 #ifndef MINISHELL_H
 # define MINISHELL_H
